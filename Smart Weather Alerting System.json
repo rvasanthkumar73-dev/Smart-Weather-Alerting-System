@@ -1,0 +1,225 @@
+{
+  "name": "Smart Weather Alerting System",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9,
+              "triggerAtMinute": 1
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -208,
+        -16
+      ],
+      "id": "ba834f6a-ec9a-4abb-aa5e-f25b1313cf6b",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "cityName": "vellore"
+      },
+      "type": "n8n-nodes-base.openWeatherMap",
+      "typeVersion": 1,
+      "position": [
+        16,
+        -16
+      ],
+      "id": "4e8d6b75-94d7-4f2d-8f5b-fa9b7e79ac8c",
+      "name": "OpenWeatherMap",
+      "credentials": {
+        "openWeatherMapApi": {
+          "id": "YOUR_OPENWEATHERMAP_CREDENTIAL_ID",
+          "name": "OpenWeatherMap account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "6f1568b1-9293-4d93-a0eb-e1310e4e782e",
+              "leftValue": "={{ $json.weather[0].main }}",
+              "rightValue": "Rain",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "ca48c871-5734-40ce-8c80-691068428a11",
+              "leftValue": "={{ $json.main.temp }}",
+              "rightValue": 35,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        240,
+        -16
+      ],
+      "id": "eb81614e-111d-4e44-ac78-c49a3cb7f376",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "sendTo": "YOUR_EMAIL@example.com",
+        "subject": "☀️ Daily Weather Update: Clear Skies and Pleasant Weather Today",
+        "message": "=<div style=\"font-family: 'Segoe UI', Arial, sans-serif; background-color: #f1f5f9; padding: 30px 10px; margin: 0; color: #334155;\">\n  <div style=\"max-width: 500px; margin: 0 auto; background: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.1);\">\n    \n    <!-- Header Banner -->\n    <div style=\"background: {{ $json.weather[0].main.includes('Rain') ? 'linear-gradient(135deg, #0284c7, #1e40af)' : 'linear-gradient(135deg, #0284c7, #0ea5e9)' }}; color: #ffffff; padding: 28px 20px; text-align: center;\">\n      <span style=\"background: rgba(255,255,255,0.2); padding: 5px 14px; border-radius: 30px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;\">\n        {{ $json.weather[0].main.includes('Rain') ? 'Weather Alert' : 'Daily Forecast' }}\n      </span>\n      <h1 style=\"margin: 12px 0 4px; font-size: 24px; font-weight: 700;\">\n        Today's Weather in {{ $json.name }}\n      </h1>\n      <p style=\"margin: 0; font-size: 13px; opacity: 0.9;\">\n        {{ new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' }) }}\n      </p>\n    </div>\n\n    <!-- Personalized Greeting -->\n    <div style=\"padding: 20px 20px 0; text-align: left;\">\n      <p style=\"margin: 0; font-size: 16px; font-weight: 600; color: #0f172a;\">\n        Good Morning! 👋\n      </p>\n      <p style=\"margin: 4px 0 0; font-size: 13px; color: #64748b;\">\n        Here is your quick automated weather update for today.\n      </p>\n    </div>\n\n    <!-- Temperature & Condition -->\n    <div style=\"padding: 20px 20px 16px; text-align: center;\">\n      <div style=\"display: inline-block; background: #f8fafc; border-radius: 16px; padding: 10px 24px; border: 1px solid #e2e8f0;\">\n        <img src=\"https://openweathermap.org/img/wn/{{ $json.weather[0].icon }}@2x.png\" alt=\"Weather Icon\" style=\"width: 60px; height: 60px; vertical-align: middle; margin-top: -6px; margin-bottom: -6px;\">\n        <span style=\"font-size: 46px; font-weight: 800; color: #0f172a; vertical-align: middle;\">\n          {{ Math.round($json.main.temp) }}°C\n        </span>\n      </div>\n      <h2 style=\"margin: 12px 0 0; font-size: 18px; color: #1e293b; text-transform: capitalize; font-weight: 600;\">\n        {{ $json.weather[0].description }}\n      </h2>\n      <p style=\"margin: 4px 0 0; font-size: 13px; color: #64748b;\">\n        Feels like {{ Math.round($json.main.feels_like) }}°C\n      </p>\n    </div>\n\n    <!-- Daily Weather Advice Card -->\n    <div style=\"margin: 0 20px 20px; background: {{ $json.weather[0].main.includes('Rain') ? '#eff6ff' : '#f0fdf4' }}; border: 1px solid {{ $json.weather[0].main.includes('Rain') ? '#bfdbfe' : '#bbf7d0' }}; border-radius: 14px; padding: 16px; text-align: left;\">\n      <strong style=\"font-size: 14px; color: {{ $json.weather[0].main.includes('Rain') ? '#1e40af' : '#166534' }}; display: block; margin-bottom: 4px;\">\n        {{ $json.weather[0].main.includes('Rain') ? '☔ Recommendation for Today' : '☀️ Recommendation for Today' }}\n      </strong>\n      <span style=\"font-size: 13px; color: {{ $json.weather[0].main.includes('Rain') ? '#1d4ed8' : '#15803d' }}; line-height: 1.4; display: block;\">\n        {{ $json.weather[0].main.includes('Rain') ? 'Rain is expected today. Please carry an umbrella or raincoat if you are heading outdoors.' : 'No rain is expected today. The weather is clear and perfect for outdoor activities.' }}\n      </span>\n    </div>\n\n    <!-- Weather Metrics Table -->\n    <div style=\"padding: 0 20px 24px;\">\n      <table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" style=\"table-layout: fixed;\">\n        <tr>\n          <td style=\"padding-right: 4px;\">\n            <div style=\"background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; text-align: center;\">\n              <span style=\"font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase;\">Humidity</span>\n              <div style=\"font-size: 15px; font-weight: 700; color: #0f172a; margin-top: 4px;\">{{ $json.main.humidity }}%</div>\n            </div>\n          </td>\n          <td style=\"padding: 0 2px;\">\n            <div style=\"background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; text-align: center;\">\n              <span style=\"font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase;\">Wind</span>\n              <div style=\"font-size: 15px; font-weight: 700; color: #0f172a; margin-top: 4px;\">{{ $json.wind.speed }} m/s</div>\n            </div>\n          </td>\n          <td style=\"padding-left: 4px;\">\n            <div style=\"background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; text-align: center;\">\n              <span style=\"font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase;\">Pressure</span>\n              <div style=\"font-size: 15px; font-weight: 700; color: #0f172a; margin-top: 4px;\">{{ $json.main.pressure }} hPa</div>\n            </div>\n          </td>\n        </tr>\n      </table>\n    </div>\n\n  </div>\n</div>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        464,
+        176
+      ],
+      "id": "f9f1bcea-9735-4a5d-b850-28e460a000a1",
+      "name": "Send Daily Email (False)",
+      "webhookId": "WEBHOOK_ID_PLACEHOLDER",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YOUR_GMAIL_CREDENTIAL_ID",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
+        "text": "=Vellore Weather Alert\n\n• Condition: {{ $('OpenWeatherMap').item.json.weather[0].description }}\n• Temperature: {{ $('OpenWeatherMap').item.json.main.temp }}°C\n• Humidity: {{ $('OpenWeatherMap').item.json.main.humidity }}%\n\nAction Needed:\n{{ $('OpenWeatherMap').item.json.weather[0].main.toLowerCase().includes('rain') ? '☔ Rain expected today! Please carry a raincoat or umbrella to protect your work.' : '☀️ High temperature alert today. Stay hydrated!' }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        464,
+        -16
+      ],
+      "id": "f61a5943-335c-4610-a159-27b849820ae1",
+      "name": "Send Telegram Alert (True)",
+      "webhookId": "WEBHOOK_ID_PLACEHOLDER",
+      "credentials": {
+        "telegramApi": {
+          "id": "YOUR_TELEGRAM_CREDENTIAL_ID",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "YOUR_EMAIL@example.com",
+        "subject": "🌧️ Rain Alert: Carrying an Umbrella is Recommended Today",
+        "message": "=<div style=\"font-family: 'Segoe UI', Arial, sans-serif; background-color: #f1f5f9; padding: 30px 10px; margin: 0; color: #334155;\">\n  <div style=\"max-width: 500px; margin: 0 auto; background: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.1);\">\n    \n    <!-- Header Banner -->\n    <div style=\"background: {{ $json.weather[0].main.includes('Rain') ? 'linear-gradient(135deg, #0284c7, #1e40af)' : 'linear-gradient(135deg, #0284c7, #0ea5e9)' }}; color: #ffffff; padding: 28px 20px; text-align: center;\">\n      <span style=\"background: rgba(255,255,255,0.2); padding: 5px 14px; border-radius: 30px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;\">\n        {{ $json.weather[0].main.includes('Rain') ? 'Weather Alert' : 'Daily Forecast' }}\n      </span>\n      <h1 style=\"margin: 12px 0 4px; font-size: 24px; font-weight: 700;\">\n        Today's Weather in {{ $json.name }}\n      </h1>\n      <p style=\"margin: 0; font-size: 13px; opacity: 0.9;\">\n        {{ new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' }) }}\n      </p>\n    </div>\n\n    <!-- Personalized Greeting -->\n    <div style=\"padding: 20px 20px 0; text-align: left;\">\n      <p style=\"margin: 0; font-size: 16px; font-weight: 600; color: #0f172a;\">\n        Good Morning! 👋\n      </p>\n      <p style=\"margin: 4px 0 0; font-size: 13px; color: #64748b;\">\n        Here is your quick automated weather update for today.\n      </p>\n    </div>\n\n    <!-- Temperature & Condition -->\n    <div style=\"padding: 20px 20px 16px; text-align: center;\">\n      <div style=\"display: inline-block; background: #f8fafc; border-radius: 16px; padding: 10px 24px; border: 1px solid #e2e8f0;\">\n        <img src=\"https://openweathermap.org/img/wn/{{ $json.weather[0].icon }}@2x.png\" alt=\"Weather Icon\" style=\"width: 60px; height: 60px; vertical-align: middle; margin-top: -6px; margin-bottom: -6px;\">\n        <span style=\"font-size: 46px; font-weight: 800; color: #0f172a; vertical-align: middle;\">\n          {{ Math.round($json.main.temp) }}°C\n        </span>\n      </div>\n      <h2 style=\"margin: 12px 0 0; font-size: 18px; color: #1e293b; text-transform: capitalize; font-weight: 600;\">\n        {{ $json.weather[0].description }}\n      </h2>\n      <p style=\"margin: 4px 0 0; font-size: 13px; color: #64748b;\">\n        Feels like {{ Math.round($json.main.feels_like) }}°C\n      </p>\n    </div>\n\n    <!-- Daily Weather Advice Card -->\n    <div style=\"margin: 0 20px 20px; background: {{ $json.weather[0].main.includes('Rain') ? '#eff6ff' : '#f0fdf4' }}; border: 1px solid {{ $json.weather[0].main.includes('Rain') ? '#bfdbfe' : '#bbf7d0' }}; border-radius: 14px; padding: 16px; text-align: left;\">\n      <strong style=\"font-size: 14px; color: {{ $json.weather[0].main.includes('Rain') ? '#1e40af' : '#166534' }}; display: block; margin-bottom: 4px;\">\n        {{ $json.weather[0].main.includes('Rain') ? '☔ Recommendation for Today' : '☀️ Recommendation for Today' }}\n      </strong>\n      <span style=\"font-size: 13px; color: {{ $json.weather[0].main.includes('Rain') ? '#1d4ed8' : '#15803d' }}; line-height: 1.4; display: block;\">\n        {{ $json.weather[0].main.includes('Rain') ? 'Rain is expected today. Please carry an umbrella or raincoat if you are heading outdoors.' : 'No rain is expected today. The weather is clear and perfect for outdoor activities.' }}\n      </span>\n    </div>\n\n    <!-- Weather Metrics Table -->\n    <div style=\"padding: 0 20px 24px;\">\n      <table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" style=\"table-layout: fixed;\">\n        <tr>\n          <td style=\"padding-right: 4px;\">\n            <div style=\"background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; text-align: center;\">\n              <span style=\"font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase;\">Humidity</span>\n              <div style=\"font-size: 15px; font-weight: 700; color: #0f172a; margin-top: 4px;\">{{ $json.main.humidity }}%</div>\n            </div>\n          </td>\n          <td style=\"padding: 0 2px;\">\n            <div style=\"background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; text-align: center;\">\n              <span style=\"font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase;\">Wind</span>\n              <div style=\"font-size: 15px; font-weight: 700; color: #0f172a; margin-top: 4px;\">{{ $json.wind.speed }} m/s</div>\n            </div>\n          </td>\n          <td style=\"padding-left: 4px;\">\n            <div style=\"background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; text-align: center;\">\n              <span style=\"font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase;\">Pressure</span>\n              <div style=\"font-size: 15px; font-weight: 700; color: #0f172a; margin-top: 4px;\">{{ $json.main.pressure }} hPa</div>\n            </div>\n          </td>\n        </tr>\n      </table>\n    </div>\n\n  </div>\n</div>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        464,
+        -208
+      ],
+      "id": "2fe5660a-ed07-4dd8-b66c-53a55e0c2583",
+      "name": "Send Email Alert (True)",
+      "webhookId": "WEBHOOK_ID_PLACEHOLDER",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YOUR_GMAIL_CREDENTIAL_ID",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "OpenWeatherMap",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenWeatherMap": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send Email Alert (True)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send Telegram Alert (True)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Daily Email (False)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Daily Email (False)": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "VERSION_ID_PLACEHOLDER",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "INSTANCE_ID_PLACEHOLDER"
+  },
+  "id": "WORKFLOW_ID_PLACEHOLDER",
+  "tags": []
+}
