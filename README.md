@@ -10,7 +10,7 @@ An automated, event-driven workflow built with **n8n** that monitors daily weath
 
 ## 📸 Workflow Preview
 
-![n8n Canvas Workflow](https://raw.githubusercontent.com/vasanth-dotcom/n8n-weather-alert-system/main/screenshots/workflow-canvas.png)
+<img width="1536" height="694" alt="2nd_workflow_image" src="https://github.com/user-attachments/assets/6367442c-8feb-4b1d-a07f-1d9b86188b09" />
 
 ---
 
