@@ -40,8 +40,7 @@ flowchart LR
 
 ## 📱 Notification Previews
 
-| Telegram Rain Alert | Gmail Daily Forecast Email |
-| :---: | :---: |
+
 | <img width="1535" height="683" alt="telegram_bot" src="https://github.com/user-attachments/assets/1339c9e5-073b-4bc1-95b2-299704d06442" />
 <img width="1536" height="696" alt="image" src="https://github.com/user-attachments/assets/f05cf2e3-b5c9-4cc1-82a0-75086387f67d" />
  |
