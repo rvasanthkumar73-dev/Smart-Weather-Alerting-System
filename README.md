@@ -42,7 +42,8 @@ flowchart LR
 
 | Telegram Rain Alert | Gmail Daily Forecast Email |
 | :---: | :---: |
-| ![Telegram Alert Screenshot](https://raw.githubusercontent.com/vasanth-dotcom/n8n-weather-alert-system/main/screenshots/telegram-alert.png) | ![Gmail Update Screenshot]<img width="1536" height="696" alt="image" src="https://github.com/user-attachments/assets/f05cf2e3-b5c9-4cc1-82a0-75086387f67d" />
+| <img width="1535" height="683" alt="telegram_bot" src="https://github.com/user-attachments/assets/1339c9e5-073b-4bc1-95b2-299704d06442" />
+<img width="1536" height="696" alt="image" src="https://github.com/user-attachments/assets/f05cf2e3-b5c9-4cc1-82a0-75086387f67d" />
  |
 
 ---
